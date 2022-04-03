@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:tpq_id/first_screen.dart';
+import 'package:tpq_id/screen/first_screen.dart';
 
 void main() {
   runApp(const MyApp());

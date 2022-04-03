@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tpq_id/data_item/alquran_item.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 var inforTextStyale_bold = TextStyle(fontFamily: 'Merriweather');
 
@@ -22,9 +23,19 @@ class DetailScreen extends StatelessWidget {
   }
 }
 
-class DetailMobilePage extends StatelessWidget {
+class DetailMobilePage extends StatefulWidget {
   final AlquranData place;
   const DetailMobilePage({required this.place});
+
+  @override
+  State<DetailMobilePage> createState() => _DetailMobilePageState();
+}
+
+class _DetailMobilePageState extends State<DetailMobilePage> {
+  final AudioPlayer audioPlayer = AudioPlayer();
+
+  PlayerState state = PlayerState.STOPPED;
+  int currentPlaying = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -47,13 +58,13 @@ class DetailMobilePage extends StatelessWidget {
                           children: [
                             SizedBox(height: 8),
                             Text(
-                              place.arab,
+                              widget.place.arab,
                               style: TextStyle(
                                 fontFamily: 'Cairo',
                                 fontSize: 80.0,
                               ),
                             ),
-                            Text(place.surah,
+                            Text(widget.place.surah,
                                 style: TextStyle(
                                     fontFamily: 'Fjalla One',
                                     fontStyle: FontStyle.italic))
@@ -106,7 +117,7 @@ class DetailMobilePage extends StatelessWidget {
                               ),
                               SizedBox(height: 8.0),
                               Text(
-                                place.artinya,
+                                widget.place.artinya,
                                 style: TextStyle(
                                     fontFamily: 'Merriweather-Regular',
                                     fontStyle: FontStyle.normal),
@@ -127,7 +138,7 @@ class DetailMobilePage extends StatelessWidget {
                               Text('Nomor Surah', style: inforTextStyale_bold),
                               SizedBox(height: 8.0),
                               Text(
-                                place.number.toString(),
+                                widget.place.number.toString(),
                                 style: TextStyle(
                                     fontFamily: 'Merriweather-Regular',
                                     fontStyle: FontStyle.normal),
@@ -148,7 +159,7 @@ class DetailMobilePage extends StatelessWidget {
                               Text('Tempat', style: inforTextStyale_bold),
                               SizedBox(height: 8.0),
                               Text(
-                                place.tempat,
+                                widget.place.tempat,
                                 style: TextStyle(
                                     fontFamily: 'Merriweather-Regular',
                                     fontStyle: FontStyle.normal),
@@ -164,7 +175,7 @@ class DetailMobilePage extends StatelessWidget {
               Container(
                 padding: EdgeInsets.all(16.0),
                 child: Text(
-                  place.description,
+                  widget.place.description,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 16.0,
@@ -172,6 +183,42 @@ class DetailMobilePage extends StatelessWidget {
                 ),
               ),
               //Audio()
+              Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+                child: Container(
+                  child: FlatButton(
+                    child: Text(currentPlaying != 2
+                        ? 'Audio ${widget.place.surah}'
+                        : state == PlayerState.PLAYING
+                            ? 'Pause ${widget.place.surah}'
+                            : 'Play ${widget.place.surah}'),
+                    onPressed: () {
+                      setState(() {
+                        if (currentPlaying == 2) {
+                          if (state == PlayerState.PLAYING) {
+                            audioPlayer.pause();
+                            state = PlayerState.PAUSED;
+                          } else {
+                            audioPlayer.play(widget.place.audio);
+                            state = PlayerState.PLAYING;
+                          }
+                        } else if (currentPlaying == 1) {
+                          audioPlayer.pause();
+                          currentPlaying = 2;
+                          audioPlayer.play(widget.place.audio);
+                          state = PlayerState.PLAYING;
+                        } else {
+                          audioPlayer.play(widget.place.audio);
+                          state = PlayerState.PLAYING;
+                          currentPlaying = 2;
+                        }
+                      });
+                    },
+                  ),
+                ),
+              ),
             ],
           ),
         ),
@@ -182,7 +229,7 @@ class DetailMobilePage extends StatelessWidget {
 
 class DetailWebPage extends StatefulWidget {
   final AlquranData place;
-  const DetailWebPage({required this.place});
+  DetailWebPage({required this.place});
 
   @override
   State<DetailWebPage> createState() => _DetailWebPageState();
@@ -190,6 +237,10 @@ class DetailWebPage extends StatefulWidget {
 
 class _DetailWebPageState extends State<DetailWebPage> {
   final _scrollController = ScrollController();
+  final AudioPlayer audioPlayer = AudioPlayer();
+
+  PlayerState state = PlayerState.STOPPED;
+  int currentPlaying = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -242,6 +293,54 @@ class _DetailWebPageState extends State<DetailWebPage> {
                                               fontStyle: FontStyle.italic)),
                                     ],
                                   ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 15),
+                            Container(
+                              child: Card(
+                                child: Column(
+                                  children: [
+                                    Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        FlatButton(
+                                          child: Text(currentPlaying != 2
+                                              ? 'Audio ${widget.place.surah}'
+                                              : state == PlayerState.PLAYING
+                                                  ? 'Pause ${widget.place.surah}'
+                                                  : 'Play ${widget.place.surah}'),
+                                          onPressed: () {
+                                            setState(() {
+                                              if (currentPlaying == 2) {
+                                                if (state ==
+                                                    PlayerState.PLAYING) {
+                                                  audioPlayer.pause();
+                                                  state = PlayerState.PAUSED;
+                                                } else {
+                                                  audioPlayer
+                                                      .play(widget.place.audio);
+                                                  state = PlayerState.PLAYING;
+                                                }
+                                              } else if (currentPlaying == 1) {
+                                                audioPlayer.pause();
+                                                currentPlaying = 2;
+                                                audioPlayer
+                                                    .play(widget.place.audio);
+                                                state = PlayerState.PLAYING;
+                                              } else {
+                                                audioPlayer
+                                                    .play(widget.place.audio);
+                                                state = PlayerState.PLAYING;
+                                                currentPlaying = 2;
+                                              }
+                                            });
+                                          },
+                                        )
+                                      ],
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
@@ -342,12 +441,6 @@ class _DetailWebPageState extends State<DetailWebPage> {
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
   }
 }
 

@@ -11,7 +11,7 @@ class Alquran extends StatelessWidget {
       ),
       body: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
-          if (constraints.maxWidth <= 500) {
+          if (constraints.maxWidth <= 800) {
             return AlquranScreen();
           } else if (constraints.maxWidth <= 1200) {
             return AlquranScreenGrid(gridCount: 4);
